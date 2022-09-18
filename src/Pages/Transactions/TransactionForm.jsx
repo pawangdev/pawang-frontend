@@ -90,6 +90,9 @@ export const TransactionForm = () => {
     React.useEffect(() => {
         getDataCategories();
         getDataWallets();
+
+        alert("Mohon Maaf Dalam Masa Pengembangan, Penambahan Transaksi Hanya Bisa Dilakukan Lewat Mobile")
+
     }, [])
 
     return (

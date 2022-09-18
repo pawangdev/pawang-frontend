@@ -107,7 +107,7 @@ export const Dashboard = () => {
                                             <div className='flex flex-row items-center justify-between'>
                                                 <div className='flex flex-row items-center'>
                                                     <div className='h-10 w-10 rounded-xl'>
-                                                        <img src={import.meta.env.VITE_URL_API + item.category.icon} alt="" />
+                                                        <img src={import.meta.env.VITE_STORAGE_API + item.category.icon} alt="" />
                                                     </div>
                                                     <div className='ml-3 flex flex-col'>
                                                         <p>{item.category.name}</p>
