@@ -22,7 +22,7 @@ export const Sidebar = () => {
         {
             name: "Settings",
             icon: IconSettings,
-            link: "/",
+            link: "/account-detail",
         },
     ]
 
@@ -32,7 +32,7 @@ export const Sidebar = () => {
         navigate('/')
     }
     return (
-        <div className="w-60 min-h-screen border-r">
+        <div className="w-60 min-h-screen border-r bg-white">
             <div className='px-10 py-14 min-h-full'>
                 <div className='brand-wrapper flex flex-row items-center gap-x-3'>
                     <div className='h-8 w-8'>
