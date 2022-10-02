@@ -4,7 +4,35 @@ import { Sidebar } from '../../Components/Sidebar'
 // https://www.kindacode.com/article/tailwind-css-how-to-create-image-modals-image-lightboxes/
 
 export const AccountDetails = () => {
-    var accRow1 
+    var detailRow1 = [
+        {
+            label: "Name :",
+            value: "Putri Ayu Nisa Az-Zahra"
+        },
+        {
+            label: "Jenis Kelamin :",
+            value: "Perempuan"
+        },
+        {
+            label: "No. Telp :",
+            value: "083156677889"
+        },
+    ]
+
+    var detailRow2 = [
+        {
+            label: "Email :",
+            value: "putri.diray12@gmail.com"
+        },
+        {
+            label: "Password :",
+            value: "xxxxxxxxxxxxxx"
+        },
+        {
+            label: "PIN :",
+            value: "xxxxxx"
+        },
+    ]
 
     return (
         <div className='w-full h-screen bg-sky-100'>
@@ -19,43 +47,34 @@ export const AccountDetails = () => {
                             </div>
                             <div className='grid grid-cols-2 gap-4 mt-9 pl-24'>
                                 <div> 
-                                    {/* name */}
-                                    <div className='container'>
-                                        <p className='text-base font-bold'>Nama :</p>
-                                        <p className='text-sm font-medium mt-2'>Putri Ayu Nisa Az-Zahra</p>
-                                    </div>
-                                    {/* gender */}
-                                    <div className='container mt-5'>
-                                        <p className='text-base font-bold'>Jenis Kelamin :</p>
-                                        <p className='text-sm font-medium mt-2'>Perempuan</p>
-                                    </div>
-                                    {/* telp number */}
-                                    <div className='container mt-5'>
-                                        <p className='text-base font-bold'>No. Telepon :</p>
-                                        <p className='text-sm font-medium mt-2'>083156677889</p>
-                                    </div>
+                                {
+                                    detailRow1.map((item, index) => {
+                                        return (
+                                            <div className='container mb-5' key={index}>
+                                                <p className='text-base font-bold'>{item.label}</p>
+                                                <p className='text-sm font-medium mt-2'>{item.value}</p>
+                                            </div>
+                                        )
+                                    })
+                                }
                                 </div>
                                 <div>
-                                    {/* email */}
-                                    <div className='container'>
-                                        <p className='text-base font-bold'>Email :</p>
-                                        <p className='text-sm font-medium mt-2'>putri.diray12@gmail.com</p>
-                                    </div>
-                                    {/* password */}
-                                    <div className='container mt-5'>
-                                        <p className='text-base font-bold'>Password :</p>
-                                        <p className='text-sm font-medium mt-1'>xxxxxxxxxxxxxx</p>
-                                    </div>
-                                    {/* PIN */}
-                                    <div className='container mt-5'>
-                                        <p className='text-base font-bold'>PIN :</p>
-                                        <p className='text-sm font-medium mt-1'>xxxxxx</p>
-                                    </div>
+                                {
+                                    detailRow2.map((item, index) => {
+                                        return (
+                                            <div className='container mb-5' key={index}>
+                                                <p className='text-base font-bold'>{item.label}</p>
+                                                <p className='text-sm font-medium mt-2'>{item.value}</p>
+                                            </div>
+                                        )
+                                    })
+                                }
                                 </div>
                             </div>
                         </div>
-                        <div className='w-full mt-8 relative'>
-                            <button className='py-2 px-32 hover:bg-sky-700 rounded-lg bg-sky-500 absolute left-1/2 -translate-x-1/2'>
+                        <div className='w-full mt-3 relative'>
+                            <button className='py-2 px-32 hover:bg-sky-700 rounded-lg bg-sky-500 absolute 
+                                                left-1/2 -translate-x-1/2'>
                                 <p className='text-md text-center text-white font-bold'>Edit Akun</p>
                             </button>
                         </div>
