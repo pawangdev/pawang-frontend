@@ -20,13 +20,14 @@ export const ChooseEdit = () => {
                     href='javascript:void(0)'
                     onclick="closeModal()">&times;</a>
 
+                {/* showing the lightbox container */}
                 <div className='w-screen h-max mx-auto my-auto flex flex-col'>
                     {/* title */}
                     <div className='mb-10'>
                         <p className='text-3xl font-bold text-white text-center'>Pilih Pengeditan</p>
                     </div>
 
-                    {/* showing the lightbox container */}
+                    {/* buttons */}
                     <div className='container mx-auto w-2/4 h-max py-10 px-10 bg-white 
                                     rounded flex flex-col items-center'>
                         {/* identitas diri */}
