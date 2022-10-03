@@ -5,6 +5,7 @@ import Login from "../Pages/Authentication/Login";
 import Register from "../Pages/Authentication/Register";
 import { Dashboard } from "../Pages/Dashboard/Dashboard";
 import { AccountDetails } from "../Pages/Settings/AccountDetails";
+import { ChooseEdit } from "../Pages/Settings/ChooseEdit";
 import { TransactionForm } from "../Pages/Transactions/TransactionForm"
 import Wallets from "../Pages/Wallets/Wallets";
 import { PrivateRoute } from "./PrivateRoute";
@@ -47,7 +48,13 @@ export const Router = () => {
                         <AccountDetails />
                     </PublicRoute>
                 } />
-            </Routes>
+
+                <Route path="/choose-edit" element={
+                        <PublicRoute>
+                            <ChooseEdit />
+                        </PublicRoute>
+                    } />
+                </Routes>
         </BrowserRouter>
     )
 }
