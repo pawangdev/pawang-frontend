@@ -11,9 +11,9 @@ export const ChooseEdit = () => {
                 class='fixed top-0 left-0 z-80 w-screen h-screen bg-black/90 flex justify-center items-center'>
 
                 {/* back button */}
-                <a class='fixed z-90 top-6 left-8 text-white text-5xl font-bold cursor-pointer' 
+                {/* <a class='fixed z-90 top-6 left-8 text-white text-5xl font-bold cursor-pointer' 
                     href='javascript:void(0)'
-                    onclick="closeModal()">&times;</a>
+                    onclick="closeModal()">&laquo;</a> */}
 
                 {/* close button */}
                 <a class='fixed z-90 top-6 right-8 text-white text-5xl font-bold cursor-pointer' 
@@ -28,8 +28,8 @@ export const ChooseEdit = () => {
                     </div>
 
                     {/* buttons */}
-                    <div className='container mx-auto w-2/4 h-max py-10 px-10 bg-white 
-                                    rounded flex flex-col items-center'>
+                    <div className='container mx-auto w-2/5 h-max py-8 px-8 bg-white 
+                                    rounded-lg flex flex-col items-center'>
                         {/* identitas diri */}
                         <Link to='/choose-edit' className='mb-3'>
                             <button className='py-2 w-80 hover:bg-sky-700 rounded-lg bg-sky-500'>
