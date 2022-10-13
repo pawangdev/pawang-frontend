@@ -36,7 +36,7 @@ export const AccountDetails = () => {
     ]
 
     return (
-        <div className='w-full h-screen bg-sky-100'>
+        <div className='w-full h-screen bg-blue-100 z-0'>
             <div className='flex flex-row'>
                 <Sidebar />
                 <div className='py-16 px-16 w-full'>
@@ -79,10 +79,10 @@ export const AccountDetails = () => {
                             </div>
                         </div>
                         {/* edit button */}
-                        <div className='w-full mt-3'>
+                        <div className='w-full mt-3 z-10'>
                             <Link to='/choose-edit'>
-                                <button className='py-2 px-32 hover:bg-sky-700 rounded-lg bg-sky-500 absolute 
-                                                    left-1/2 -translate-x-1/2'>
+                                <button className='py-2 px-32 rounded-lg bg-blue-500 hover:bg-blue-700 absolute 
+                                                    left-1/2 -translate-x-1/2 transition duration-200 ease-in-out'>
                                     <p className='text-md text-center text-white font-bold'>Edit Akun</p>
                                 </button>
                             </Link>

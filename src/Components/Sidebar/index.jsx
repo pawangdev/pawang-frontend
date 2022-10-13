@@ -48,7 +48,7 @@ export const Sidebar = () => {
                                 return (
                                     <Link to={item.link} key={index} className="flex items-center mt-4">
                                         <item.icon className='mr-3' />
-                                        <p className='text-gray-500 text-sm'>{item.name}</p>
+                                        <p className='text-gray-500 text-sm hover:text-blue-700 hover:font-medium'>{item.name}</p>
                                     </Link>
                                 )
                             })

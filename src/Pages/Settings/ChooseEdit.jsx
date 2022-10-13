@@ -1,23 +1,38 @@
-import React from 'react';
-import { AccountDetails } from './AccountDetails';
+import React from 'react'
+import { AccountDetails } from './AccountDetails'
 import { Link } from 'react-router-dom'
 
 export const ChooseEdit = () => {
+    var editItems = [
+        {
+            label: 'Identitas Diri',
+            link: '/edit-identitas-diri'
+        },
+        {
+            label: 'Email',
+            link: '/edit-email'
+        },
+        {
+            label: 'Password',
+            link: '/edit-password'
+        },
+        {
+            label: 'PIN',
+            link: '/edit-pin'
+        },
+    ]
+
     return(
         // parent wrap
         <div>
             {/* lightbox/modal */}
             <div id='modal'
-                class='fixed top-0 left-0 z-80 w-screen h-screen bg-black/90 flex justify-center items-center'>
-
-                {/* back button */}
-                {/* <a class='fixed z-90 top-6 left-8 text-white text-5xl font-bold cursor-pointer' 
-                    href='javascript:void(0)'
-                    onclick="closeModal()">&laquo;</a> */}
+                className='fixed top-0 left-0 z-80 w-screen h-screen bg-black/90 flex 
+                        justify-center items-center z-20'>
 
                 {/* close button */}
-                <a class='fixed z-90 top-6 right-8 text-white text-5xl font-bold cursor-pointer' 
-                    href='javascript:void(0)'
+                <a className='fixed z-90 top-6 right-8 text-white text-5xl font-bold cursor-pointer' 
+                    href='/account-detail'
                     onclick="closeModal()">&times;</a>
 
                 {/* showing the lightbox container */}
@@ -30,38 +45,24 @@ export const ChooseEdit = () => {
                     {/* buttons */}
                     <div className='container mx-auto w-2/5 h-max py-8 px-8 bg-white 
                                     rounded-lg flex flex-col items-center'>
-                        {/* identitas diri */}
-                        <Link to='/choose-edit' className='mb-3'>
-                            <button className='py-2 w-80 hover:bg-sky-700 rounded-lg bg-sky-500'>
-                                <p className='text-md text-center text-white font-bold'>Identitas Diri</p>
-                            </button>
-                        </Link>
-
-                        {/* email */}
-                        <Link to='/choose-edit' className='mb-3'>
-                            <button className='py-2 w-80 hover:bg-sky-700 rounded-lg bg-sky-500'>
-                                <p className='text-md text-center text-white font-bold'>Email</p>
-                            </button>
-                        </Link>
-
-                        {/* password */}
-                        <Link to='/choose-edit' className='mb-3'>
-                            <button className='py-2 w-80 hover:bg-sky-700 rounded-lg bg-sky-500'>
-                                <p className='text-md text-center text-white font-bold'>Password</p>
-                            </button>
-                        </Link>
-
-                        {/* PIN */}
-                        <Link to='/choose-edit' className='mb-3'>
-                            <button className='py-2 w-80 hover:bg-sky-700 rounded-lg bg-sky-500'>
-                                <p className='text-md text-center text-white font-bold'>PIN</p>
-                            </button>
-                        </Link>
+                        {/* edit items */}
+                        {
+                            editItems.map((item, index) => {
+                                return(
+                                    <Link to={item.link} className='mb-3'>
+                                        <button className='py-2 w-80 rounded-lg bg-blue-500 shadow hover:bg-blue-700
+                                                            transition duration-200 ease-in-out'>
+                                            <p className='text-md text-center text-white font-bold'>{item.label}</p>
+                                        </button>
+                                    </Link>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>
 
-            {/* the account details background */}
+            {/* the account details as the background */}
             <AccountDetails />
         </div>
     )
