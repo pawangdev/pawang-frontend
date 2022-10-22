@@ -1,162 +1,201 @@
 import React from 'react'
-import { useRecoilValue } from 'recoil'
-import { authState } from '../../Services/Store/auth'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { profileUser } from '@/Services/API/AuthenticationAPI';
+import { getAllTransactions } from '@/Services/API/TransactionAPI';
+import { addWallet, getAllWallets } from '@/Services/API/WalletAPI';
+import { QuickActionButton } from '@/Components/QuickActionButton';
+import { IconCategory, IconCreditCard, IconCreditCardOff, IconScan } from '@tabler/icons';
+import { toast } from 'react-toastify';
+import { formatCurrency } from '@/Utils/formatter';
+import moment from "moment";
+import "moment/dist/locale/id";
 
 export const Dashboard = () => {
-    const { user } = useRecoilValue(authState)
-    const [transactions, setTransactions] = React.useState([])
-    const [wallets, setWallets] = React.useState([])
+    const [user, setUser] = React.useState({ name: '' });
+    const [transactions, setTransactions] = React.useState([]);
+    const [wallets, setWallets] = React.useState([]);
 
-    const dataTransactions = async () => {
-        const res = await axios.get(`${import.meta.env.VITE_URL_API}/transactions`, {
-            headers: {
-                Authorization: "Bearer " + user.token,
+    // Wallet Form
+    const [addWalletModal, setAddWalletModal] = React.useState(false);
+    const [payloadWallet, setPayloadWallet] = React.useState({
+        name: "",
+        balance: 0
+    });
+
+    const onSubmit = async () => {
+        try {
+            const res = await addWallet(payloadWallet)
+
+            if (res.status == 201 || res.status == 200) {
+                toast.success('Berhasil Menambahkan Wallet !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                setAddWalletModal(false);
+                dataWallets();
+                dataTransactions();
+
+                setPayloadWallet({
+                    name: '',
+                    balance: 0
+                });
+            } else {
+                toast.error('Terdapat Kesalahan Pada Server !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
-        });
-        if (res.data.data != null) {
-            setTransactions(res.data.data);
-        } else {
-            setTransactions([]);
+        } catch (error) {
+            toast.error('Terdapat Kesalahan Pada Server !', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            setAddWalletModal(false);
         }
     }
 
+    const dataUserProfile = async () => {
+        const data = await profileUser();
+        setUser({ name: data.user.name })
+    };
+
+    const dataTransactions = async () => {
+        const res = await getAllTransactions();
+        if (res != null) {
+            setTransactions(res);
+        } else {
+            setTransactions([]);
+        }
+    };
+
     const dataWallets = async () => {
-        const res = await axios.get(`${import.meta.env.VITE_URL_API}/wallets`, {
-            headers: {
-                Authorization: "Bearer " + user.token,
-            }
-        });
-        if (res.data.data != null) {
-            setWallets(res.data.data);
+        const res = await getAllWallets();
+        if (res != null) {
+            setWallets(res);
         } else {
             setWallets([]);
         }
+    };
+
+    const onChangeInput = (e) => {
+        setPayloadWallet({ ...payloadWallet, [e.target.name]: e.target.value });
     }
 
     React.useEffect(() => {
         dataTransactions();
         dataWallets();
-    }, [])
+        dataUserProfile();
+    }, []);
 
     return (
         <>
-            <div className='py-14 px-16 w-6/12'>
-                <p className='text-2xl text-blue-700'>Welcome back {user.name}!</p>
+            <p className='text-2xl text-blue-700 capitalize'>Selamat Datang <strong>{user.name}</strong></p>
 
-                <div className="grid grid-cols-4 gap-x-9 mt-8">
-                    <Link to="/transaction/add/income" className='w-32 h-36 bg-green-50 rounded-2xl'>
-                        <div className="flex flex-col px-4 py-6 content-between justify-between min-h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-credit-card stroke-green-600" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                <line x1="7" y1="15" x2="7.01" y2="15"></line>
-                                <line x1="11" y1="15" x2="13" y2="15"></line>
-                            </svg>
-                            <p className='text-xs text-green-600'>Tambah Pemasukan</p>
-                        </div>
-                    </Link>
-                    <Link to="/transaction/add/outcome" className='w-32 h-36 bg-purple-50 rounded-2xl'>
-                        <div className="flex flex-col px-4 py-6 content-between justify-between min-h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-credit-card stroke-purple-600" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                <line x1="7" y1="15" x2="7.01" y2="15"></line>
-                                <line x1="11" y1="15" x2="13" y2="15"></line>
-                            </svg>
-                            <p className='text-xs text-purple-600'>Tambah Pengeluaran</p>
-                        </div>
-                    </Link>
-                    <Link className='w-32 h-36 bg-orange-50 rounded-2xl'>
-                        <div className="flex flex-col px-4 py-6 content-between justify-between min-h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-credit-card stroke-orange-600" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                <line x1="7" y1="15" x2="7.01" y2="15"></line>
-                                <line x1="11" y1="15" x2="13" y2="15"></line>
-                            </svg>
-                            <p className='text-xs text-orange-600'>Scan Struk</p>
-                        </div>
-                    </Link>
-                    <div className='w-32 h-36 bg-blue-50 rounded-2xl'>
-                        <div className="flex flex-col px-4 py-6 content-between justify-between min-h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-credit-card stroke-blue-600" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                <line x1="7" y1="15" x2="7.01" y2="15"></line>
-                                <line x1="11" y1="15" x2="13" y2="15"></line>
-                            </svg>
-                            <p className='text-xs text-blue-600'>Kategori</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-9 gap-y-3 mt-8">
+                <QuickActionButton bgColor="bg-purple-100" textColor="text-purple-600" link="/transaction/create" icon={<IconCreditCardOff className='stroke-purple-600' />} label="Tambah Transaksi" />
+                <QuickActionButton bgColor="bg-orange-100" textColor="text-orange-600" link="/scan-receipt" icon={<IconScan className='stroke-orange-600' />} label="Scan Struk" />
+                <QuickActionButton bgColor="bg-blue-100" textColor="text-blue-600" link="/category/create" icon={<IconCategory className='stroke-blue-600' />} label="Kategori" />
+            </div >
+
+            <div className="flex gap-x-3">
+                <div className="w-6/12">
+                    <div className='transaction-wrapper'>
+                        <div className="mt-14 w-full">
+                            <div className='item-wrapper mb-6'>
+                                <p className='text-sm font-medium text-gray-500'>Riwayat Transaksi</p>
+                                <div className="rounded my-3">
+                                    <table className="min-w-max w-full table-auto rounded-lg overflow-hidden">
+                                        <thead>
+                                            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                                <th className="py-3 px-6 text-left">Kategori</th>
+                                                <th className="py-3 px-6 text-left">Nominal</th>
+                                                <th className="py-3 px-6 text-center">Tanggal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-gray-600 text-sm font-light bg-white">
+                                            {
+                                                transactions.length == 0 ? (
+                                                    <tr className='border-b border-gray-200'>
+                                                        <td className="py-3 px-6 text-center whitespace-nowrap" colSpan={4}>Data Masih Kosong</td>
+                                                    </tr>
+                                                ) : transactions.map((item, index) => (
+                                                    <tr className={`${transactions.length - 1 != index ? "border-b" : ""} border-gray-200 hover:bg-gray-200 transition-colors duration-300`} key={index}>
+                                                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                            <div className="flex items-center gap-x-3">
+                                                                <img className='w-7 bg-cover' src={`${import.meta.env.VITE_STORAGE_API + item.category.icon}`} alt={item.category.name} />
+                                                                <span className="font-medium">{item.category.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                            <span className={`font-medium ${item.type != "income" ? "text-red-600" : "text-green-600"}`}>{formatCurrency(item.amount)}</span>
+                                                        </td>
+                                                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                            <span className="font-medium">{moment(item.date).format('LL')}</span>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div >
                 </div >
 
-                <div className='transaction-wrapper'>
-                    <div className="mt-14 w-2/3">
-                        <div className='item-wrapper mb-6'>
-                            <p className='text-xs text-gray-500 mb-2'>Riwayat Transaksi</p>
-                            {
-                                transactions.length != 0 ? transactions.map((item, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div className='flex flex-row items-center justify-between'>
-                                                <div className='flex flex-row items-center'>
-                                                    <div className='h-10 w-10 rounded-xl'>
-                                                        <img src={import.meta.env.VITE_STORAGE_API + item.category.icon} alt="" />
-                                                    </div>
-                                                    <div className='ml-3 flex flex-col'>
-                                                        <p>{item.category.name}</p>
-                                                        <p className='text-xs text-gray-500'>19.30</p>
-                                                    </div>
-                                                </div>
-                                                <p className={`${item.type == "income" ? "text-green-500" : "text-red-500"}`}>{`${item.type == "income" ? "+ " + item.amount : "- " + item.amount}`}</p>
-                                            </div>
-                                            <hr className='mt-3' />
-                                        </div>
-                                    )
-                                }) : <p>Data Transaksi Kosong</p>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div >
-
-            <div className='min-h-full bg-gray-100 w-[433px] ml-auto rounded-tl-[70px] px-16 py-14'>
-                <div className='flex flex-row justify-end items-center'>
-                    <p className='text-sm mr-8 text-gray-500'>{user.name}</p>
-                    <div className='w-9 h-9'>
-                        <img className='rounded-full object-cover position bg-center' src={`${user.gender == 'male' ? '/images/man.png' : '/images/woman.png'}`} alt="People" />
-                    </div>
-                </div>
-
-                <div className="card-wrapper">
-                    <div className="bg-blue-600 h-48 mt-7 rounded-2xl relative overflow-hidden">
-                        <div className='absolute z-20 p-5 min-w-full flex flex-col justify-between min-h-full'>
-                            <p className='text-white text-lg'></p>
-                            <div className='text-white'>
-                                <p className='text-sm'>{wallets[0] != null ? wallets[0]['name'] : '-'}</p>
-                                <p className='text-lg'>{wallets[0] != null ? "Rp " + wallets[0]['balance'] : '-'}</p>
+                <div className="w-6/12">
+                    <div className='transaction-wrapper'>
+                        <div className="mt-14 w-full">
+                            <div className='item-wrapper mb-6'>
+                                <p className='text-sm font-medium text-gray-500'>Daftar Wallet</p>
+                                <div className="rounded my-3">
+                                    <table className="min-w-max w-full table-auto rounded-lg overflow-hidden">
+                                        <thead>
+                                            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                                <th className="py-3 px-6 text-left">Nama Wallet</th>
+                                                <th className="py-3 px-6 text-left">Nominal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-gray-600 text-sm font-light bg-white">
+                                            {
+                                                wallets.length == 0 ? (
+                                                    <tr className='border-b border-gray-200'>
+                                                        <td className="py-3 px-6 text-center whitespace-nowrap" colSpan={4}>Data Masih Kosong</td>
+                                                    </tr>
+                                                ) : wallets.map((item, index) => (
+                                                    <tr className={`${wallets.length - 1 != index ? "border-b" : ""} border-gray-200 hover:bg-gray-200 transition-colors duration-300`} key={index}>
+                                                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                            <span className="font-medium">{item.name}</span>
+                                                        </td>
+                                                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                            <span className="font-medium">{formatCurrency(item.balance)}</span>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div className="h-64 w-64 bg-sky-900 rounded-full relative right-16 -top-4">
-                        </div>
-                        <div className="h-44 w-44 bg-teal-400 absolute z-10 -top-12 -right-16 rounded-full">
-                        </div>
-                    </div>
-                </div>
-
-                <div className='mt-11'>
-                    <button className='py-3 outline-dashed outline-2 outline-gray-500 w-full text-gray-500 text-sm rounded-md'>
-                        Add new card
-                    </button>
-                </div>
-
+                    </div >
+                </div >
             </div>
         </>
-    )
+    );
 }

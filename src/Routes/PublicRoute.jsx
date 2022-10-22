@@ -1,9 +1,10 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { authState } from "../Services/Store/auth";
 
-export function PublicRoute({ children }) {
+export function PublicRoute() {
     const { auth } = useRecoilValue(authState);
-    return auth ? <Navigate to="/" /> : children;
+    console.log(auth);
+    return auth ? <Navigate to="/" /> : <Outlet />;
 }

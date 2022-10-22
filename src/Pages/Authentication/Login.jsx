@@ -23,7 +23,7 @@ const Login = () => {
         const res = await loginUser(state);
 
         if (res.status == 201 || res.status == 200) {
-            window.localStorage.setItem("token", res.data.data.token);
+            localStorage.setItem("_token", res.data.data.access_token);
 
             toast.success('Login Berhasil !', {
                 position: "top-right",
@@ -35,9 +35,9 @@ const Login = () => {
                 progress: undefined,
             });
 
-            setAuth({ auth: true, user: res.data.data });
+            setAuth({ auth: true, user: res.data.data.user });
 
-            navigate('/');
+            navigate('/', { replace: true });
         } else {
             toast.error('Terdapat Kesalahan Pada Server !', {
                 position: "top-right",

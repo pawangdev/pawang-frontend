@@ -11,7 +11,10 @@ module.exports = {
     extend: {
       fontFamily: {
         'sans': ['Open Sans', 'system-ui', ...defaultTheme.fontFamily.sans]
-      }
+      },
+      colors: {
+        'muted': '#6c757d',
+      },
     },
   },
   plugins: [],

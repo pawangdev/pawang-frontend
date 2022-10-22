@@ -2,22 +2,25 @@
   "name": "pawang-frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.3",
     "@tabler/icons": "^1.96.0",
     "axios": "^0.27.2",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
+    "react-currency-input-field": "^3.6.5",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.0",
+    "react-slick": "^0.29.0",
     "react-toastify": "^9.0.8",
     "recoil": "^0.7.5",
     "recoil-persist": "^4.2.0",
-    "sort-by": "^1.2.0"
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",

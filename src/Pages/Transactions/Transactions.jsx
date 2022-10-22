@@ -1,19 +1,20 @@
 import React from 'react'
 import Button from '@/Components/Button';
 import { formatCurrency } from '@/Utils/formatter';
-import { deleteWallet, getAllWallets } from '@/Services/API/WalletAPI';
 import { toast } from 'react-toastify';
+import { deleteTransaction, getAllTransactions } from '@/Services/API/TransactionAPI';
+import moment from 'moment';
 
-const Wallets = () => {
-    const page = "wallet";
-    const [wallets, setWallets] = React.useState([])
+const Transactions = () => {
+    const page = "transaksi";
+    const [transactions, setTransactions] = React.useState([])
 
-    const getWalletsData = async () => {
-        const res = await getAllWallets();
+    const getTransactionData = async () => {
+        const res = await getAllTransactions();
         if (res != null) {
-            setWallets(res);
+            setTransactions(res);
         } else {
-            setWallets([]);
+            setTransactions([]);
         }
     }
 
@@ -22,9 +23,9 @@ const Wallets = () => {
 
         if (result) {
             try {
-                const res = await deleteWallet(id);
+                const res = await deleteTransaction(id);
                 if (res.status === 200) {
-                    getWalletsData();
+                    getTransactionData();
                     toast.success(`${page} Berhasil Dihapus !`, {
                         position: "top-right",
                         autoClose: 5000,
@@ -49,10 +50,10 @@ const Wallets = () => {
         }
     }
 
-    const columns = ["Nama", "Jumlah", ""];
+    const columns = ["Kategori", "Nominal", "Tanggal", ""];
 
     React.useEffect(() => {
-        getWalletsData();
+        getTransactionData();
     }, [])
     return (
         <div className='bg-white rounded-xl px-8 py-4'>
@@ -73,15 +74,23 @@ const Wallets = () => {
                     </thead>
                     <tbody className='text-gray-600 text-sm font-light'>
                         {
-                            wallets?.length === 0 ? (
+                            transactions?.length === 0 ? (
                                 <tr className='border-b border-gray-200 hover:bg-gray-100'>
                                     <td colSpan={8} className='py-3 px-6 text-center whitespace-nowrap font-medium'>Belum Ada Data</td>
                                 </tr>
-                            ) : (wallets?.map((item, index) => {
+                            ) : (transactions?.map((item, index) => {
                                 return (
                                     <tr key={index} className='border-b border-gray-200 hover:bg-gray-100'>
-                                        <td className='py-3 px-6 text-left whitespace-nowrap font-medium'>{item.name}</td>
-                                        <td className='py-3 px-6 text-left whitespace-nowrap font-medium'>{formatCurrency(item.balance)}</td>
+                                        <td className='py-3 px-6 text-left whitespace-nowrap font-medium'>
+                                            <div className="flex items-center gap-x-3">
+                                                <img className='w-7 bg-cover' src={`${import.meta.env.VITE_STORAGE_API + item.category.icon}`} alt={item.category.name} />
+                                                <span className="font-medium">{item.category.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
+                                            <span className={`font-medium ${item.type != "income" ? "text-red-600" : "text-green-600"}`}>{formatCurrency(item.amount)}</span>
+                                        </td>
+                                        <td className='py-3 px-6 text-left whitespace-nowrap font-medium'><span className="font-medium">{moment(item.date).format('LL')}</span></td>
                                         <td>
                                             <div className='py-3 px-6 flex flex-row items-center justify-end gap-x-3'>
                                                 <Button is_link={true} link={`edit/${item.id}`} className="text-white bg-gray-500 hover:bg-gray-600">Edit</Button>
@@ -99,4 +108,4 @@ const Wallets = () => {
     )
 }
 
-export default Wallets
+export default Transactions

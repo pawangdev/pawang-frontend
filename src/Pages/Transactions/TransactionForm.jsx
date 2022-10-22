@@ -1,145 +1,187 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import axios from 'axios';
-import { authState } from '../../Services/Store/auth';
-import { useRecoilValue } from 'recoil';
+import { getAllCategories } from '@/Services/API/CategoryAPI';
+import { getAllWallets } from '@/Services/API/WalletAPI';
+import { addTransaction, getTransactionById, updateTransaction } from '@/Services/API/TransactionAPI';
+import { toast } from 'react-toastify';
+import { Label, Input } from '@/Components/Input';
+import moment from 'moment';
 
 export const TransactionForm = () => {
-    const { user } = useRecoilValue(authState)
-    const { type } = useParams();
+    const page = "transaksi";
+    const navigate = useNavigate();
+    const { id } = useParams();
 
     const [categories, setCategories] = React.useState([]);
     const [wallets, setWallets] = React.useState([]);
 
-    const [state, setState] = React.useState({
+    const [payload, setPayload] = React.useState({
         amount: 0,
-        category_id: 0,
-        sub_category_id: 0,
-        wallet_id: 0,
-        type: type,
+        category_id: "",
+        wallet_id: "",
         description: "",
         date: "",
     });
 
+    const isAdding = id == null ? true : false;
+
     const getDataCategories = async () => {
-        const res = await axios.get(`${import.meta.env.VITE_URL_API}/categories?type=${type}`, {
-            headers: {
-                Authorization: "Bearer " + user.token,
-            }
-        });
-        if (res.data.data != null) {
-            setCategories(res.data.data);
+        const res = await getAllCategories();
+        if (res != null) {
+            setCategories(res);
         } else {
             setCategories([]);
         }
     }
 
     const getDataWallets = async () => {
-        const res = await axios.get(`${import.meta.env.VITE_URL_API}/wallets`, {
-            headers: {
-                Authorization: "Bearer " + user.token,
-            }
-        });
-        if (res.data.data != null) {
-            setWallets(res.data.data);
+        const res = await getAllWallets();
+        if (res != null) {
+            setWallets(res);
         } else {
             setWallets([]);
         }
     }
 
-    const addTransaction = async (e) => {
+    const onSubmitForm = async (e) => {
         e.preventDefault();
-        const date = new Date(state.date).toISOString();
-        setState({ ...state, amount: Number(state.amount), date })
-        console.log(state);
-        const res = await axios.post(`${import.meta.env.VITE_URL_API}/transactions/create`, state, {
-            headers: {
-                Authorization: "Bearer " + user.token,
+        if (isAdding) {
+            const res = await addTransaction(payload)
+            if (res.status == 201 || res.status == 200) {
+                toast.success('Berhasil Menambahkan Transaksi !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                navigate('/transaction', { replace: true });
+            } else {
+                toast.error('Terdapat Kesalahan Pada Server !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
-        })
-
-        if (res.status == 201 || res.status == 200) {
-            toast.success('Berhasil Menambahkan Transaksi !', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
-
-            navigate('/');
         } else {
-            toast.error('Terdapat Kesalahan Pada Server !', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            const res = await updateTransaction(id, payload)
+            if (res.status == 201 || res.status == 200) {
+                toast.success('Berhasil Menambahkan Transaksi !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                navigate('/transaction', { replace: true });
+            } else {
+                toast.error('Terdapat Kesalahan Pada Server !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
         }
     }
 
-    const onChange = (e) => {
-        setState({ ...state, [e.target.name]: e.target.value })
+    const updatePayload = (e) => {
+        setPayload({ ...payload, [e.target.name]: e.target.value })
+    }
+
+    const getTransactionData = async () => {
+        const res = await getTransactionById(id);
+        setPayload(res);
     }
 
     React.useEffect(() => {
+        if (id) getTransactionData()
         getDataCategories();
         getDataWallets();
-
-        alert("Mohon Maaf Dalam Masa Pengembangan, Penambahan Transaksi Hanya Bisa Dilakukan Lewat Mobile")
-
     }, [])
 
     return (
-        <div className='py-14 px-16 w-6/12'>
-            <p className='text-2xl text-blue-700'>Transaksi {type == "income" ? "Pemasukan" : "Pengeluaran"}</p>
-
-            <div className='form-wrapper mt-3'>
-                <form onSubmit={addTransaction} method="POST">
-                    <div className='mb-3'>
-                        <label htmlFor='amount' className='text-gray-600 font-light mb-2'>Jumlah Transaksi</label>
-                        <input value={state.amount} name='amount' id='amount' type="number" className='p-2 border rounded-md w-full' placeholder='Jumlah Transaksi' onChange={(e) => onChange(e)} />
-                    </div>
-                    <div className='mb-3'>
-                        <label htmlFor='category_id' className='text-gray-600 font-light mb-2'>Kategori</label>
-                        <select value={state.category_id} onChange={(e) => onChange(e)} name='category_id' id="category_id" className="p-2 border rounded-md w-full">
-                            <option>Pilih Kategori</option>
-                            {
-                                categories.map((item, index) => <option key={index} value={item.id}>{item.name}</option>)
-                            }
-                        </select>
-                    </div>
-                    <div className='mb-3'>
-                        <label htmlFor='wallet_id' className='text-gray-600 font-light mb-2'>Wallet</label>
-                        <select value={state.wallet_id} onChange={(e) => onChange(e)} name='wallet_id' id="wallet_id" className="p-2 border rounded-md w-full">
-                            <option>Pilih Wallet</option>
-
-                            {
-                                wallets.map((item, index) => <option key={index} value={item.id}>{item.name}</option>)
-                            }
-                        </select>
-                    </div>
-                    <div className='mb-3'>
-                        <label htmlFor='description' className='text-gray-600 font-light mb-2'>Deskripsi</label>
-                        <textarea value={state.description} name="description" id="description" cols="30" rows="2" placeholder='Deskripsi' className='p-2 border rounded-md w-full' onChange={(e) => onChange(e)}></textarea>
-                    </div>
-                    <div className='mb-3'>
-                        <label htmlFor='date' className='text-gray-600 font-light mb-2'>Tanggal & Jam</label>
-                        <input value={state.date} name='date' id='date' type="datetime-local" className='p-2 border rounded-md w-full' placeholder='Tanggal & Jam' onChange={(e) => onChange(e)} />
-                    </div>
-                    <button className='py-3 px-6 rounded-full bg-blue-500 text-white font-semibold float-right mt-3'>
-                        Tambah {type == "income" ? "Pemasukan" : "Pengeluaran"}
-                    </button>
-                </form>
-
+        <div className='bg-white rounded-xl px-8 py-4'>
+            <div className='flex items-center justify-between mb-6'>
+                <p className='text-xl font-semibold text-blue-800 capitalize'>{`${isAdding ? "Tambah" : "Edit"} ${page}`}</p>
             </div>
-
-
+            <form method="post" onSubmit={onSubmitForm}>
+                <div className="grid grid-cols-12 grid-rows-1 gap-5">
+                    <div className="col-span-12">
+                        <div>
+                            <p className='text-lg font-medium text-slate-700'>Saldo Awal Wallet</p>
+                            <div className='mt-2'>
+                                <Label htmlFor="amount">Nominal</Label>
+                                <Input value={payload?.amount} onChange={(e) => updatePayload(e)} type="number" name='amount' placeholder='Jumlah Nominal' />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-6">
+                        <div>
+                            <p className='text-lg font-medium text-slate-700'>Kategori</p>
+                            <div className='mt-2'>
+                                <Label htmlFor="category_id">Kategori</Label>
+                                <select value={payload?.category_id} onChange={(e) => updatePayload(e)} name="category_id" id="category_id" className='block border w-full rounded-lg p-2 mt-1'>
+                                    <option value="" hidden>Tentukan Kategori Anda</option>
+                                    {
+                                        categories.map((item, index) => <option key={index} value={item.id}>{item.name}</option>)
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-6">
+                        <div>
+                            <p className='text-lg font-medium text-slate-700'>Wallet</p>
+                            <div className='mt-2'>
+                                <Label htmlFor="amount">Wallet</Label>
+                                <select value={payload?.wallet_id} onChange={(e) => updatePayload(e)} name="wallet_id" id="wallet_id" className='block border w-full rounded-lg p-2 mt-1'>
+                                    <option value="" hidden>Tentukan Wallet Anda</option>
+                                    {
+                                        wallets.map((item, index) => <option key={index} value={item.id}>{item.name}</option>)
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-6">
+                        <div>
+                            <p className='text-lg font-medium text-slate-700'>Tanggal</p>
+                            <div className='mt-2'>
+                                <Label htmlFor="date">Nominal</Label>
+                                <input className='block border w-full rounded-lg p-2 mt-1' value={payload?.date} onChange={(e) => updatePayload(e)} type="datetime-local" name="date" id="date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-12">
+                        <div>
+                            <p className='text-lg font-medium text-slate-700'>Deskripsi</p>
+                            <div className='mt-2'>
+                                <Label htmlFor="description">Deskripsi</Label>
+                                <textarea name="description" id="description" className='block border w-full rounded-lg p-2 mt-1' cols="3" rows="3" onChange={(e) => updatePayload(e)} value={payload?.description}></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-12 mt-6">
+                        <div className="float-right">
+                            <button type='submit' className="py-2 px-6 text-base font-semibold rounded-full transition-all duration-200 capitalize bg-blue-500 hover:bg-blue-600 text-white" >Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     )
 }

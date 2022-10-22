@@ -1,21 +1,46 @@
-import axios from "axios";
+import axios from "../../Config/AxiosConfig";
 
-const registerUser = async (payload) => {
+export const registerUser = async (payload) => {
     try {
-        const res = await axios.post(`${import.meta.env.VITE_URL_API}/users/register`, payload)
+        const res = await axios.post(`/auth/register`, payload)
         return res;
     } catch (error) {
         return error.response;
     }
 }
 
-const loginUser = async (payload) => {
+export const loginUser = async (payload) => {
     try {
-        const res = await axios.post(`${import.meta.env.VITE_URL_API}/users/login`, payload)
+        const res = await axios.post(`/auth/login`, payload)
         return res;
     } catch (error) {
         return error.response;
     }
 }
 
-export { registerUser, loginUser }
+export const profileUser = async () => {
+    try {
+        const res = await axios.get('/auth/profile')
+        return res.data.data;
+    } catch (error) {
+        return error.response;
+    }
+}
+
+export const updateProfileUser = async (payload) => {
+    try {
+        const res = await axios.post(`/auth/change-profile`, payload)
+        return res;
+    } catch (error) {
+        return error.response;
+    }
+}
+
+export const updatePassword = async (payload) => {
+    try {
+        const res = await axios.post(`/auth/change-password`, payload)
+        return res;
+    } catch (error) {
+        return error.response;
+    }
+}

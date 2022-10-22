@@ -1,11 +1,12 @@
-import { IconHome, IconLogout, IconSettings, IconWallet } from '@tabler/icons'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { IconHome, IconLayoutSidebar, IconLogout, IconNote, IconSettings, IconWallet } from '@tabler/icons'
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../../Services/Store/auth';
 
 export const Sidebar = () => {
     const setAuth = useSetRecoilState(authState);
+    const location = useLocation();
     const navigate = useNavigate();
 
     var subMenuData = [
@@ -20,20 +21,26 @@ export const Sidebar = () => {
             link: "/wallets",
         },
         {
+            name: "Transaksi",
+            icon: IconNote,
+            link: "/transaction",
+        },
+        {
             name: "Settings",
             icon: IconSettings,
-            link: "/account-detail",
+            link: "/settings",
         },
     ]
 
-    const logOut = () => {
+    const logOut = async () => {
         setAuth({ auth: false, user: [] });
+        localStorage.clear();
 
-        navigate('/')
+        navigate('/login', { replace: true })
     }
     return (
-        <div className="w-60 min-h-screen border-r bg-white">
-            <div className='px-10 py-14 min-h-full'>
+        <div className="min-w-[12rem] min-h-screen border-r shadow-sm hidden md:block">
+            <div className='px-10 py-14 min-h-full bg-white'>
                 <div className='brand-wrapper flex flex-row items-center gap-x-3'>
                     <div className='h-8 w-8'>
                         <img src="/logo/pawang.svg" alt="" />
@@ -48,7 +55,7 @@ export const Sidebar = () => {
                                 return (
                                     <Link to={item.link} key={index} className="flex items-center mt-4">
                                         <item.icon className='mr-3' />
-                                        <p className='text-gray-500 text-sm hover:text-blue-700 hover:font-medium'>{item.name}</p>
+                                        <p className={`${location.pathname == item.link ? "text-blue-500 font-semibold" : "text-gray-500"} text-sm`}>{item.name}</p>
                                     </Link>
                                 )
                             })

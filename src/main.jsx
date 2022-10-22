@@ -11,6 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <RecoilRoot>
       <Router />
       <ToastContainer
+        className="capitalize"
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}

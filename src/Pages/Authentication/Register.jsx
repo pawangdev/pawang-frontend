@@ -26,7 +26,7 @@ const Register = () => {
         const res = await registerUser(state);
 
         if (res.status == 201 || res.status == 200) {
-            window.localStorage.setItem("token", res.data.data.token);
+            window.localStorage.setItem("token", res.data.data.access_token);
 
             toast.success('Registrasi Berhasil !', {
                 position: "top-right",
