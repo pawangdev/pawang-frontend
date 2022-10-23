@@ -8,9 +8,13 @@ import { toast } from 'react-toastify';
 import { formatCurrency } from '@/Utils/formatter';
 import moment from "moment";
 import "moment/dist/locale/id";
+import { useRecoilValue } from 'recoil';
+import { authState } from '@/Services/Store/auth';
 
 export const Dashboard = () => {
-    const [user, setUser] = React.useState({ name: '' });
+    const { user } = useRecoilValue(authState);
+
+    console.log(user);
     const [transactions, setTransactions] = React.useState([]);
     const [wallets, setWallets] = React.useState([]);
 
@@ -69,11 +73,6 @@ export const Dashboard = () => {
         }
     }
 
-    const dataUserProfile = async () => {
-        const data = await profileUser();
-        setUser({ name: data.user.name })
-    };
-
     const dataTransactions = async () => {
         const res = await getAllTransactions();
         if (res != null) {
@@ -99,7 +98,6 @@ export const Dashboard = () => {
     React.useEffect(() => {
         dataTransactions();
         dataWallets();
-        dataUserProfile();
     }, []);
 
     return (

@@ -26,7 +26,7 @@ const Register = () => {
         const res = await registerUser(state);
 
         if (res.status == 201 || res.status == 200) {
-            window.localStorage.setItem("token", res.data.data.access_token);
+            await window.localStorage.setItem("_token", res.data.data.access_token);
 
             toast.success('Registrasi Berhasil !', {
                 position: "top-right",
@@ -38,9 +38,11 @@ const Register = () => {
                 progress: undefined,
             });
 
-            setAuth({ auth: true, user: res.data.data });
+            setAuth({ auth: true, user: res.data.data.user });
 
-            navigate('/');
+            navigate('/', {
+                replace: true
+            });
         } else {
             toast.error('Terdapat Kesalahan Pada Server !', {
                 position: "top-right",
